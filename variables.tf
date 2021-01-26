@@ -30,13 +30,13 @@ variable "application" {
 
 variable "max_capacity" {
   type        = number
-  default     = ""
+  default     = null
   description = "The max capacity of the scalable target"
 }
 
 variable "min_capacity" {
   type        = number
-  default     = ""
+  default     = null
   description = "The min capacity of the scalable target"
 }
 
