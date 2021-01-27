@@ -32,14 +32,17 @@ resource "aws_appautoscaling_policy" "default" {
   dynamic "target_tracking_scaling_policy_configuration" {
     for_each = var.target_tracking_configuration
     content {
-      predefined_metric_specification {
-        predefined_metric_type = lookup(target_tracking_scaling_policy_configuration.value, "predefined_metric_type", "ECSServiceAverageCPUUtilization")
-        resource_label         = lookup(target_tracking_scaling_policy_configuration.value, "resource_label", null)
-      }
-
-      target_value       = lookup(target_tracking_scaling_policy_configuration.value, "target_value", 75)
+      target_value       = target_tracking_scaling_policy_configuration.value.target_value
       scale_in_cooldown  = lookup(target_tracking_scaling_policy_configuration.value, "scale_in_cooldown", 60)
       scale_out_cooldown = lookup(target_tracking_scaling_policy_configuration.value, "scale_out_cooldown", 60)
+
+      dynamic "predefined_metric_specification" {
+        for_each = lookup(target_tracking_scaling_policy_configuration.value, "predefined_metric_specification", [])
+        content {
+          predefined_metric_type = lookup(target_tracking_scaling_policy_configuration.value, "predefined_metric_type", "ECSServiceAverageCPUUtilization")
+          resource_label         = lookup(target_tracking_scaling_policy_configuration.value, "resource_label", null)
+        }
+      }
     }
   }
 }
